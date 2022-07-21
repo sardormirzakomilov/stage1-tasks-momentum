@@ -1,25 +1,13 @@
-// ================= play pause ===================================
-const playyyy = document.querySelector('.play')
-const audio = document.querySelector('audio');
-playyyy.addEventListener('click', playAudio)
-function playAudio() {
-    if (audio.paused) {
-        audio.play()
-        playyyy.classList.add('pause')
-        console.log('if');
-    } else {
-        audio.pause();
-        playyyy.classList.remove('pause')
-        console.log('else');
-    }
-}
 // =================================================================
-const playList = [
-    {
-        title: 'Aqua Caelestis',
-        src: '../assets/sounds/Aqua Caelestis.mp3',
-        duration: '00:58'
-    }, {
+
+function allMusic() {
+    
+    const allMusic = [
+        {
+            title: 'Aqua Caelestis',
+            src: '../assets/sounds/Aqua Caelestis.mp3',
+            duration: '00:58'
+        }, {
         title: 'River Flows In You',
         src: '../assets/sounds/River Flows In You.mp3',
         duration: '03:50'
@@ -35,7 +23,87 @@ const playList = [
         duration: '05:03'
     }
 ]
+return allMusic
+}
 
+
+// ================= play pause ===================================
+const playList = document.querySelector('.play-list');
+const playPrev = document.querySelector('.play-prev');
+const playNext = document.querySelector('.play-next');
+
+// Music names
+allMusic().forEach(val => {
+    const play_item = document.createElement('li');
+
+    play_item.classList.add("play-item")
+
+    const nameText = document.createTextNode(`${val.title}`)
+
+    play_item.appendChild(nameText)
+
+    playList.appendChild(play_item)
+})
+
+//  paused
+let i = 0
+
+let audio = new Audio();
+
+audio.src = allMusic()[i].src
+
+const play = document.querySelector('.play');
+
+play.addEventListener("click", playPauseHandler)
+
+function playPauseHandler() {
+    play.classList.toggle("pause")
+
+    if (audio.paused) {
+        audio.play();
+    } else {
+        audio.pause();
+    }
+}
+
+// next prev buttons
+const play_item = document.querySelectorAll('.play-item');
+
+playNext.addEventListener("click", nextHandler)
+playPrev.addEventListener("click", prevHandler)
+
+function nextHandler() {
+    play.classList.add("pause")
+
+    audio.src = allMusic()[i].src
+
+    audio.play()
+
+    play_item.forEach((val) => val.classList.remove("item-active"))
+
+    play_item[i].classList.add("item-active")
+
+    i++
+
+    if (i >= play_item.length) {
+        i = 0
+    }
+}
+
+function prevHandler() {
+    play.classList.add("pause")
+
+    play_item.forEach((val) => val.classList.remove("item-active"))
+
+    i--
+    if (i < 0) {
+        i = play_item.length - 1
+    }
+    play_item[i].classList.add("item-active")
+    audio.src = allMusic()[i].src
+
+    audio.play()
+}
 
 
 // ======================== TIMER =================================
@@ -89,4 +157,15 @@ if (localStorage.getItem('name')) {
     name.value = localStorage.getItem('name');
 }
 
-// ========================        ===================================
+// ==============================  slider    ===================================
+
+
+const body = document.querySelector('body');
+const slidePrev = document.querySelector('.slide-prev');
+const slideNext = document.querySelector('.slide-next');
+
+slidePrev.addEventListener('click' ,  prevvSlide)
+
+function prevvSlide() {
+    body.style.backgroundImage = `url('../assets/img/bg2.jpg')`
+}
