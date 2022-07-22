@@ -1,33 +1,28 @@
-// =================================================================
 
 function allMusic() {
-    
     const allMusic = [
         {
             title: 'Aqua Caelestis',
             src: '../assets/sounds/Aqua Caelestis.mp3',
             duration: '00:58'
         }, {
-        title: 'River Flows In You',
-        src: '../assets/sounds/River Flows In You.mp3',
-        duration: '03:50'
-    },
-    {
-        title: 'Summer Wind',
-        src: '../assets/sounds/Summer Wind.mp3',
-        duration: '05:05'
-    },
-    {
-        title: 'Ennio Morricone',
-        src: '../assets/sounds/Ennio Morricone.mp3',
-        duration: '05:03'
-    }
-]
-return allMusic
+            title: 'River Flows In You',
+            src: '../assets/sounds/River Flows In You.mp3',
+            duration: '03:50'
+        },
+        {
+            title: 'Summer Wind',
+            src: '../assets/sounds/Summer Wind.mp3',
+            duration: '05:05'
+        },
+        {
+            title: 'Ennio Morricone',
+            src: '../assets/sounds/Ennio Morricone.mp3',
+            duration: '05:03'
+        }
+    ]
+    return allMusic
 }
-
-
-// ================= play pause ===================================
 const playList = document.querySelector('.play-list');
 const playPrev = document.querySelector('.play-prev');
 const playNext = document.querySelector('.play-next');
@@ -105,7 +100,6 @@ function prevHandler() {
     audio.play()
 }
 
-
 // ======================== TIMER =================================
 
 const time = document.querySelector('.time');
@@ -157,15 +151,61 @@ if (localStorage.getItem('name')) {
     name.value = localStorage.getItem('name');
 }
 
-// ==============================  slider    ===================================
+// ==============================   weather    ===================================
+const city = document.querySelector('.city');
+const temp = document.querySelector('.description-container .temperature');
+const clSky = document.querySelector('.description-container .weather-description');
+const humidity = document.querySelector(' .humidity');
+const wind = document.querySelector('.wind');
+const weatherIcon = document.querySelector('.owf');
+let cityName = localStorage.getItem('city'); 
 
-
-const body = document.querySelector('body');
-const slidePrev = document.querySelector('.slide-prev');
-const slideNext = document.querySelector('.slide-next');
-
-slidePrev.addEventListener('click' ,  prevvSlide)
-
-function prevvSlide() {
-    body.style.backgroundImage = `url('../assets/img/bg2.jpg')`
+if (!cityName) {
+    cityName = 'Minsk'
 }
+
+city.value = cityName;  
+
+async function getWeather() {
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=08f2a575dda978b9c539199e54df03b0&units=metric`;
+    fetch(url).then(res => res.json())
+        .then(data => {
+            weatherIcon.classList.add(`owf-${data.weather[0].id}`);
+            temp.innerHTML = Math.floor(data.main.temp) + '&degC'
+            clSky.innerHTML = data.weather[0].description
+            wind.textContent = 'Wind speed: ' + Math.floor(data.wind.speed) + ' m/s'
+            humidity.textContent = 'Humidity: ' + data.main.humidity + '%'
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+}
+getWeather()
+
+let weather = (e) => {
+    let cityVal = city.value
+    if (e.keyCode === 13) {
+        console.log(cityVal)
+        let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityVal}&appid=8a483a84d725f15e52c5e45c4f82edb8&units=metric`
+
+        fetch(url).then(res => res.json())
+            .then(data => {
+                console.log(data)
+                weatherIcon.classList.add(`owf-${data.weather[0].id}`);
+                temp.innerHTML = Math.floor(data.main.temp) + '&degC'
+                clSky.innerHTML = data.weather[0].description
+                wind.textContent = 'Wind speed: ' + Math.floor(data.wind.speed) + ' m/s'
+                humidity.textContent = 'Humidity: ' + data.main.humidity + '%'
+           
+                localStorage.setItem('city' ,  cityVal)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+  
+}
+city.addEventListener('keypress', weather)
+
+
+
