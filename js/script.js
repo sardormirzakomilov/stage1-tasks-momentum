@@ -158,13 +158,13 @@ const clSky = document.querySelector('.description-container .weather-descriptio
 const humidity = document.querySelector(' .humidity');
 const wind = document.querySelector('.wind');
 const weatherIcon = document.querySelector('.owf');
-let cityName = localStorage.getItem('city'); 
+let cityName = localStorage.getItem('city');
 
 if (!cityName) {
     cityName = 'Minsk'
 }
 
-city.value = cityName;  
+city.value = cityName;
 
 async function getWeather() {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=08f2a575dda978b9c539199e54df03b0&units=metric`;
@@ -196,16 +196,71 @@ let weather = (e) => {
                 clSky.innerHTML = data.weather[0].description
                 wind.textContent = 'Wind speed: ' + Math.floor(data.wind.speed) + ' m/s'
                 humidity.textContent = 'Humidity: ' + data.main.humidity + '%'
-           
-                localStorage.setItem('city' ,  cityVal)
+
+                localStorage.setItem('city', cityVal)
             })
             .catch((error) => {
                 console.log(error);
             })
     }
-  
+
 }
 city.addEventListener('keypress', weather)
 
+// =============================== Quote of the Day   ============================================
+
+const ResButton = document.querySelector('.change-quote');
+const quote = document.querySelector('.quote');
+const author = document.querySelector('.author');
+
+let s = 0
+function getQuotes() {
+    const quotes = '../data.json';
+    fetch(quotes)
+    .then(res => res.json())
+    .then(data => {
+        if (s == data.length) {
+            s = 0
+        }
+        quote.textContent = data[s].text;
+        author.textContent = data[s].author;
+        s++
+        
+    });
+}
+getQuotes();
+
+ResButton.addEventListener('click', getQuotes)
 
 
+
+// =============================== slider ============================================
+
+const nextB = document.querySelector('.slide-next');
+const prevB = document.querySelector('.slide-prev');
+const body = document.querySelector('body');
+
+nextB.addEventListener('click', nextF );
+prevB.addEventListener('click', nextF );
+
+function nextF() {
+    let j = 0
+        const url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=0f15ff623f1198a1f7f52550f8c36057&tags=nature&extras=url_l&format=json&nojsoncallback=1';
+        arr = []
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            for (let key in data.photos.photo){
+            arr.push(data.photos.photo[key].url_l)
+            // console.log(data.photos.photo[key].url_l)
+            
+        
+        }
+        });
+        console.log(arr);
+        j++
+        
+}
+function prevF() {
+    
+}
