@@ -152,6 +152,7 @@ if (localStorage.getItem('name')) {
 }
 
 // ==============================   weather    ===================================
+const errorW = document.querySelector('.weather-error');
 const city = document.querySelector('.city');
 const temp = document.querySelector('.description-container .temperature');
 const clSky = document.querySelector('.description-container .weather-description');
@@ -185,12 +186,18 @@ getWeather()
 let weather = (e) => {
     let cityVal = city.value
     if (e.keyCode === 13) {
-        console.log(cityVal)
         let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityVal}&appid=8a483a84d725f15e52c5e45c4f82edb8&units=metric`
 
-        fetch(url).then(res => res.json())
+        fetch(url).then(res => {
+            if (!res.ok) {
+                throw new Error(`city not found for '${cityVal}'!`)
+            }else{
+                return res.json()
+              
+            }
+        })
             .then(data => {
-                console.log(data)
+                errorW.textContent = ''
                 weatherIcon.classList.add(`owf-${data.weather[0].id}`);
                 temp.innerHTML = Math.floor(data.main.temp) + '&degC'
                 clSky.innerHTML = data.weather[0].description
@@ -200,7 +207,12 @@ let weather = (e) => {
                 localStorage.setItem('city', cityVal)
             })
             .catch((error) => {
-                console.log(error);
+                errorW.textContent = error
+                weatherIcon.setAttribute('class','weather-icon owf')
+                temp.innerHTML =  ''
+                clSky.innerHTML =  ''
+                wind.innerHTML =  ''
+                humidity.innerHTML = ''
             })
     }
 
@@ -217,16 +229,16 @@ let s = 0
 function getQuotes() {
     const quotes = '../data.json';
     fetch(quotes)
-    .then(res => res.json())
-    .then(data => {
-        if (s == data.length) {
-            s = 0
-        }
-        quote.textContent = data[s].text;
-        author.textContent = data[s].author;
-        s++
-        
-    });
+        .then(res => res.json())
+        .then(data => {
+            if (s == data.length) {
+                s = 0
+            }
+            quote.textContent = data[s].text;
+            author.textContent = data[s].author;
+            s++
+
+        });
 }
 getQuotes();
 
@@ -240,27 +252,21 @@ const nextB = document.querySelector('.slide-next');
 const prevB = document.querySelector('.slide-prev');
 const body = document.querySelector('body');
 
-nextB.addEventListener('click', nextF );
-prevB.addEventListener('click', nextF );
-
+nextB.addEventListener('click', nextF);
+prevB.addEventListener('click', prevF);
+g = 10
+body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/evening/${g}.jpg')`;
 function nextF() {
-    let j = 0
-        const url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=0f15ff623f1198a1f7f52550f8c36057&tags=nature&extras=url_l&format=json&nojsoncallback=1';
-        arr = []
-        fetch(url)
-          .then(res => res.json())
-          .then(data => {
-            for (let key in data.photos.photo){
-            arr.push(data.photos.photo[key].url_l)
-            // console.log(data.photos.photo[key].url_l)
-            
-        
-        }
-        });
-        console.log(arr);
-        j++
-        
+    if (g >= 19) {
+        g = 10
+    }
+    g++
+    body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/evening/${g}.jpg')`;
 }
 function prevF() {
-    
+    if (g <= 10) {
+        g = 19
+    }
+    g--
+    body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/evening/${g}.jpg')`;
 }
